@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>앱 사용 현황 주간 리뷰 3주차</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@700&family=DM+Mono:wght@400;500&display=swap');
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: #f0ede8;
+font-family: ‘Noto Sans KR’, sans-serif;
+padding: 40px 24px;
+min-height: 100vh;
+}
+
+.wrapper {
+max-width: 640px;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+/* ── 헤더 ── */
+.header {
+background: #1a1a1a;
+color: #fff;
+border-radius: 20px;
+padding: 28px 32px;
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+.header-label { font-size: 11px; letter-spacing: 0.15em; color: #888; text-transform: uppercase; margin-bottom: 6px; }
+.header-title { font-size: 22px; font-weight: 700; line-height: 1.3; }
+.header-sub { font-size: 12px; color: #666; margin-top: 8px; }
+.header-date { font-family: ‘Space Mono’, monospace; font-size: 11px; color: #666; text-align: right; line-height: 1.6; flex-shrink: 0; }
+
+/* ── 섹션 타이틀 ── */
+.section-title {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+padding: 8px 4px 4px;
+text-align: center;
+}
+.section-num {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px;
+color: #aaa;
+}
+.section-name {
+font-size: 18px;
+font-weight: 900;
+color: #1a1a1a;
+letter-spacing: -0.02em;
+word-break: keep-all;
+}
+
+/* ── 이벤트 카드 ── */
+.event-card {
+border-radius: 20px; overflow: hidden;
+background: linear-gradient(145deg,#0d0d0d 0%,#1c1000 50%,#0d0d0d 100%);
+color: #fff; position: relative;
+box-shadow: 0 8px 40px rgba(245,197,24,0.18);
+}
+.event-glow-t { position:absolute; top:-60px; right:-60px; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle,rgba(245,197,24,0.22) 0%,transparent 70%); pointer-events:none; }
+.event-glow-b { position:absolute; bottom:-40px; left:-40px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,rgba(245,197,24,0.12) 0%,transparent 70%); pointer-events:none; }
+
+.event-header { padding: 26px 28px 18px; border-bottom: 1px solid rgba(245,197,24,0.2); position: relative; }
+.event-tag { display:inline-block; background:#f5c518; color:#1a1a1a; font-size:9px; font-weight:800; letter-spacing:0.14em; padding:4px 10px; border-radius:4px; text-transform:uppercase; margin-bottom:12px; }
+.event-title { font-size: 22px; font-weight: 900; line-height: 1.3; word-break: keep-all; }
+.event-title span { color: #f5c518; }
+.event-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.75; margin-top: 8px; word-break: keep-all; }
+
+.event-item { padding: 16px 28px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; gap: 16px; align-items: flex-start; }
+.event-prize { flex-shrink:0; text-align:center; min-width:56px; }
+.prize-icon { font-size: 18px; margin-bottom: 3px; }
+.prize-amount { font-family:‘Space Mono’,monospace; font-size:22px; font-weight:700; color:#f5c518; line-height:1; }
+.prize-unit { font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.event-detail { flex: 1; padding-top: 2px; }
+.event-cond-label { font-size:9px; letter-spacing:0.12em; color:rgba(245,197,24,0.55); text-transform:uppercase; margin-bottom:5px; }
+.event-cond-text { font-size:12.5px; line-height:1.7; color:rgba(255,255,255,0.88); word-break:keep-all; }
+.event-cond-text strong { color:#fff; }
+
+/* 참여 방법 */
+.event-how { padding: 16px 28px 18px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.event-how-label { font-size:9px; letter-spacing:0.12em; color:rgba(245,197,24,0.55); text-transform:uppercase; margin-bottom:12px; }
+.how-step { display:flex; gap:12px; align-items:flex-start; margin-bottom:8px; }
+.how-step:last-child { margin-bottom:0; }
+.how-num { font-family:‘Space Mono’,monospace; font-size:12px; font-weight:700; color:#f5c518; flex-shrink:0; }
+.how-text { font-size:12px; color:rgba(255,255,255,0.75); line-height:1.6; word-break:keep-all; }
+.how-text strong { color:#fff; }
+
+/* 문자 버블 */
+.event-bubble { padding: 16px 28px 18px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.bubble-label { font-size:9px; letter-spacing:0.12em; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-bottom:10px; }
+.bubble-wrap { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.bubble-name { font-size:9px; color:rgba(255,255,255,0.3); }
+.bubble { background:#3a7bd5; border-radius:18px 18px 4px 18px; padding:12px 15px; max-width:90%; }
+.bubble-text { font-size:12px; color:#fff; line-height:1.75; word-break:keep-all; }
+.bubble-time { font-size:9px; color:rgba(255,255,255,0.45); text-align:right; margin-top:4px; }
+
+/* 마감 배너 */
+.event-deadline { padding:14px 28px 16px; background:rgba(245,197,24,0.08); border-top:1px solid rgba(245,197,24,0.15); display:flex; align-items:center; gap:14px; }
+.deadline-icon { font-size:22px; flex-shrink:0; }
+.deadline-title { font-size:11px; font-weight:700; color:#f5c518; margin-bottom:3px; }
+.deadline-desc { font-size:11px; color:rgba(255,255,255,0.6); line-height:1.6; word-break:keep-all; }
+
+.event-footer { padding:14px 28px 18px; text-align:center; background:rgba(245,197,24,0.05); }
+.event-footer-text { font-size:12px; color:rgba(255,255,255,0.38); line-height:1.8; word-break:keep-all; }
+.event-footer-cta { color:rgba(245,197,24,0.75); font-weight:700; font-size:13px; }
+
+/* ── 히트맵 카드 ── */
+.chart-card {
+background: #fff;
+border-radius: 20px;
+padding: 24px 24px 28px;
+}
+.chart-label { font-size:9px; color:#aaa; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px; }
+.chart-title { font-size:15px; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
+.chart-desc { font-size:11px; color:#999; margin-bottom:22px; line-height:1.6; word-break:keep-all; }
+
+.heatmap { display:grid; grid-template-columns: 36px repeat(4, 1fr); gap:4px; }
+.hm-cell { height:40px; border-radius:4px; display:flex; align-items:center; justify-content:center; }
+.hm-header { height:32px; font-size:9px; font-weight:700; color:#999; text-align:center; line-height:1.5; background:transparent; }
+.hm-row-label { background:transparent; font-size:10px; font-weight:700; color:#888; justify-content:flex-end; padding-right:4px; }
+
+.legend { display:flex; align-items:center; gap:6px; margin-top:10px; justify-content:flex-end; }
+.legend-label { font-size:9px; color:#bbb; }
+.legend-swatches { display:flex; gap:2px; }
+.legend-swatch { width:16px; height:8px; border-radius:2px; }
+
+/* 시간대 바 */
+.ts-section { margin-top:20px; border-top:1px solid #eee; padding-top:18px; }
+.ts-label { font-size:9px; color:#bbb; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px; }
+.ts-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+.ts-name { font-size:10px; color:#555; width:82px; flex-shrink:0; }
+.ts-track { flex:1; height:7px; background:#f0f0f0; border-radius:4px; overflow:hidden; }
+.ts-fill { height:100%; border-radius:4px; background:#ccc; }
+.ts-fill.peak { background:#00A6A0; }
+.ts-badge { font-size:9px; font-weight:700; color:#00A6A0; background:#F0FAFA; border:1px solid rgba(0,166,160,0.2); padding:2px 7px; border-radius:10px; white-space:nowrap; flex-shrink:0; }
+.ts-badge.muted { color:#bbb; background:#F8F8F8; border-color:#EEE; }
+
+/* 인사이트 */
+.insights { display:flex; flex-direction:column; gap:8px; margin-top:18px; }
+.insight-item { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:10px; border-left:3px solid #eee; background:#f7f7f5; }
+.insight-item.hi { border-left-color:#00A6A0; background:#F0FAFA; }
+.insight-item.wa { border-left-color:#f5c518; background:#FFFBF0; }
+.insight-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
+.insight-text { font-size:12px; color:#444; line-height:1.7; word-break:keep-all; }
+.insight-text strong { color:#1a1a1a; font-weight:700; }
+
+/* 가설 */
+.hypo-section { margin-top:18px; border-top:1px solid #eee; padding-top:18px; }
+.hypo-label { font-size:9px; color:#bbb; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px; }
+.hypo-card { border-radius:10px; padding:18px; margin-bottom:8px; }
+.hypo-card.dark { background:#1a1a1a; }
+.hypo-card.light { background:#F0FAFA; border:1.5px solid rgba(0,166,160,0.25); }
+.hypo-card:last-child { margin-bottom:0; }
+.hypo-num { font-family:‘DM Mono’,monospace; font-size:9px; font-weight:700; letter-spacing:0.12em; color:#00A6A0; margin-bottom:8px; }
+.hypo-text { font-size:12px; line-height:1.85; word-break:keep-all; }
+.hypo-card.dark .hypo-text { color:rgba(255,255,255,0.85); }
+.hypo-card.dark .hypo-text strong { color:#fff; }
+.hypo-card.light .hypo-text { color:#333; }
+.hypo-card.light .hypo-text strong { color:#1a1a1a; }
+
+/* ── 클로징 카드 ── */
+.closing-card {
+background: #1a1a1a;
+border-radius: 20px;
+overflow: hidden;
+color: #fff;
+position: relative;
+}
+.closing-glow { position:absolute; top:-50px; right:-50px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(100,181,246,0.15) 0%,transparent 70%); pointer-events:none; }
+.closing-inner { padding:26px 28px; position:relative; }
+.closing-tag { display:inline-block; background:#64b5f6; color:#1a1a1a; font-size:9px; font-weight:800; letter-spacing:0.14em; padding:4px 10px; border-radius:4px; text-transform:uppercase; margin-bottom:12px; }
+.closing-title { font-size:20px; font-weight:900; line-height:1.3; word-break:keep-all; margin-bottom:10px; }
+.closing-title span { color:#64b5f6; }
+.closing-desc { font-size:12.5px; color:rgba(255,255,255,0.5); line-height:1.8; word-break:keep-all; margin-bottom:20px; }
+.closing-thanks {
+background: rgba(100,181,246,0.08);
+border: 1px solid rgba(100,181,246,0.2);
+border-radius:12px;
+padding:16px;
+font-size:12.5px;
+color:rgba(255,255,255,0.8);
+line-height:1.85;
+word-break:keep-all;
+margin-bottom:14px;
+}
+.closing-thanks strong { color:#64b5f6; font-weight:700; }
+.closing-nps {
+background: rgba(255,255,255,0.05);
+border-radius:12px;
+padding:14px 16px;
+display:flex;
+align-items:flex-start;
+gap:12px;
+}
+.closing-nps-icon { font-size:20px; flex-shrink:0; }
+.closing-nps-text { font-size:12px; color:rgba(255,255,255,0.7); line-height:1.7; word-break:keep-all; }
+.closing-nps-text strong { color:#64b5f6; font-weight:700; }
+</style>
+
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- 헤더 -->
+
+  <div class="header">
+    <div>
+      <div class="header-label">Staff Report · Week 3</div>
+      <div class="header-title">앱 사용 현황<br>주간 리뷰</div>
+      <div class="header-sub">매장 운영 참고용 내부 자료</div>
+    </div>
+    <div class="header-date">2026<br>04.17<br>—04.23</div>
+  </div>
+
+  <!-- ① 이벤트 -->
+
+  <div class="section-title">
+    <div class="section-num">01</div>
+    <div class="section-name">문자만 보내면 끝!<br>10만원에 도전하세요!</div>
+  </div>
+
+  <div class="event-card" style="background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,0.08);">
+
+```
+<!-- 상단 골드 배너 -->
+<div style="background:#1a1a1a; padding:22px 28px 18px;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div>
+      <div style="display:inline-block; background:#f5c518; color:#1a1a1a; font-size:9px; font-weight:800; letter-spacing:0.14em; padding:4px 10px; border-radius:4px; text-transform:uppercase; margin-bottom:10px;">🎁 Event</div>
+      <div style="font-size:20px; font-weight:900; color:#fff; line-height:1.3; word-break:keep-all;">앱 활용 우수 매니저<br><span style="color:#f5c518;">특별 포상 이벤트</span></div>
+    </div>
+    <div style="text-align:right; flex-shrink:0; margin-left:12px;">
+      <div style="font-size:9px; color:#888; margin-bottom:4px;">마감</div>
+      <div style="font-family:'Space Mono',monospace; font-size:13px; font-weight:700; color:#f5c518;">수요일</div>
+      <div style="font-size:9px; color:#666;">다음 주</div>
+    </div>
+  </div>
+</div>
+
+<!-- 시상 3개 가로 배치 -->
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#f0f0f0;">
+  <div style="background:#fff; padding:18px 12px; text-align:center;">
+    <div style="font-size:20px; margin-bottom:6px;">🥇</div>
+    <div style="font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:#1a1a1a; line-height:1;">10만</div>
+    <div style="font-size:9px; color:#aaa; margin-top:2px;">원 상당</div>
+    <div style="font-size:9px; color:#888; margin-top:8px; line-height:1.5;">판매 사례<br>공유 1위</div>
+  </div>
+  <div style="background:#fff; padding:18px 12px; text-align:center;">
+    <div style="font-size:20px; margin-bottom:6px;">🥈</div>
+    <div style="font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:#1a1a1a; line-height:1;">5만</div>
+    <div style="font-size:9px; color:#aaa; margin-top:2px;">원 상당</div>
+    <div style="font-size:9px; color:#888; margin-top:8px; line-height:1.5;">판매 사례<br>공유 2위</div>
+  </div>
+  <div style="background:#fff; padding:18px 12px; text-align:center;">
+    <div style="font-size:20px; margin-bottom:6px;">⭐</div>
+    <div style="font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:#1a1a1a; line-height:1;">5만</div>
+    <div style="font-size:9px; color:#aaa; margin-top:2px;">원 상당</div>
+    <div style="font-size:9px; color:#888; margin-top:8px; line-height:1.5;">활용 사례<br>별상</div>
+  </div>
+</div>
+
+<!-- 문자 예시 버블 먼저 -->
+<div style="padding:16px 24px 18px; background:#f7f7f5; border-top:1px solid #eeeeee;">
+  <div style="font-size:9px; color:#bbb; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:10px;">✉️ 참여 예시</div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+    <div style="font-size:9px; color:#bbb; margin-bottom:2px;">김땡땡 매니저</div>
+    <div style="background:#3a7bd5; border-radius:18px 18px 4px 18px; padding:12px 15px; max-width:90%;">
+      <div style="font-size:12px; color:#fff; line-height:1.75; word-break:keep-all;">안녕하세요! 판매 사례 공유드립니다 😊<br><br>혼수 준비 고객분께 뷰킷 인테리어 몰딩 사진으로 설치 과정을 보여드렸더니 <strong>STEM 얼정냉 구독 계약</strong>으로 이어졌습니다!</div>
+      <div style="font-size:9px; color:rgba(255,255,255,0.45); text-align:right; margin-top:4px;">오후 3:24 ✓✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- 참여 방법 아래로 -->
+<div style="padding:18px 24px; border-top:1px solid #f0f0f0;">
+  <div style="font-size:9px; color:#aaa; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:12px;">참여 방법 — 문자 한 통이면 끝!</div>
+  <div style="display:flex; flex-direction:column; gap:8px;">
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#1a1a1a; flex-shrink:0;">01</div>
+      <div style="font-size:12.5px; color:#444; line-height:1.6; word-break:keep-all;">냉장고 상담 시 <strong style="color:#1a1a1a;">뷰킷 또는 가전 밸런스 게임</strong>을 활용해주세요.</div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#1a1a1a; flex-shrink:0;">02</div>
+      <div style="font-size:12.5px; color:#444; line-height:1.6; word-break:keep-all;">판매 사례, 후기, 의견 — <strong style="color:#1a1a1a;">어떤 것이든 좋으니 사례를 문자로</strong> 보내주세요.</div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#1a1a1a; flex-shrink:0;">03</div>
+      <div style="font-size:12.5px; color:#444; line-height:1.6; word-break:keep-all;"><strong style="color:#1a1a1a;">그게 전부입니다 😊</strong> 짧아도 괜찮아요!</div>
+    </div>
+    <div style="margin-top:10px; padding:10px 12px; background:#f5f5f5; border-radius:8px; font-size:11px; color:#888; line-height:1.6; word-break:keep-all;">
+      🗓 시상은 파일럿 종료 후 <strong style="color:#555;">5월 초 개별 연락</strong> 드립니다.
+    </div>
+  </div>
+</div>
+
+<!-- 마감 -->
+<div style="padding:14px 24px 16px; background:#1a1a1a; display:flex; align-items:center; gap:14px;">
+  <div style="font-size:22px; flex-shrink:0;">⏰</div>
+  <div>
+    <div style="font-size:11px; font-weight:700; color:#f5c518; margin-bottom:3px;">마감 다음 주 수요일!</div>
+    <div style="font-size:11px; color:rgba(255,255,255,0.55); line-height:1.6; word-break:keep-all;">이번 주말 상담에서 사례를 많이 만들어주세요 💪</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ② 히트맵 -->
+
+  <div class="section-title">
+    <div class="section-num">02</div>
+    <div class="section-name">뷰킷, 무슨 요일·시간대에 많이 쓸까요?</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-label">Real Data · GA4 Analytics</div>
+    <div class="chart-title">요일 × 시간대별 사용 패턴</div>
+    <div class="chart-desc">2026.04.01 – 04.23 · 뷰킷 매장용 총 940회 조회 기준 · 색이 진할수록 조회가 많은 시간대입니다.</div>
+
+```
+<div class="heatmap">
+  <div class="hm-cell hm-header"></div>
+  <div class="hm-cell hm-header">오전<br>9–12시</div>
+  <div class="hm-cell hm-header">오후<br>13–15시</div>
+  <div class="hm-cell hm-header">오후<br>16–18시</div>
+  <div class="hm-cell hm-header">저녁<br>19시~</div>
+
+  <div class="hm-cell hm-row-label">월</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.28)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.85)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.10)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.06)"></div>
+
+  <div class="hm-cell hm-row-label">화</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.05)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.05)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.03)"></div>
+  <div class="hm-cell" style="background:#F8F8F8"></div>
+
+  <div class="hm-cell hm-row-label">수</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.16)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.62)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.20)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.04)"></div>
+
+  <div class="hm-cell hm-row-label">목</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.18)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.18)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.22)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.18)"></div>
+
+  <div class="hm-cell hm-row-label">금</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.17)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.16)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.08)"></div>
+  <div class="hm-cell" style="background:#F8F8F8"></div>
+
+  <div class="hm-cell hm-row-label">토</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.16)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.04)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.04)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.02)"></div>
+
+  <div class="hm-cell hm-row-label">일</div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.17)"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.04)"></div>
+  <div class="hm-cell" style="background:#F8F8F8"></div>
+  <div class="hm-cell" style="background:rgba(0,166,160,0.12)"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-label">낮음</div>
+  <div class="legend-swatches">
+    <div class="legend-swatch" style="background:rgba(0,166,160,0.05)"></div>
+    <div class="legend-swatch" style="background:rgba(0,166,160,0.20)"></div>
+    <div class="legend-swatch" style="background:rgba(0,166,160,0.45)"></div>
+    <div class="legend-swatch" style="background:rgba(0,166,160,0.65)"></div>
+    <div class="legend-swatch" style="background:rgba(0,166,160,0.85)"></div>
+  </div>
+  <div class="legend-label">높음</div>
+</div>
+
+<div class="ts-section">
+  <div class="ts-label">시간대별 활용 비중</div>
+  <div class="ts-row">
+    <div class="ts-name">오후 13–15시</div>
+    <div class="ts-track"><div class="ts-fill peak" style="width:100%"></div></div>
+    <div class="ts-badge">가장 활발</div>
+  </div>
+  <div class="ts-row">
+    <div class="ts-name">오전 9–12시</div>
+    <div class="ts-track"><div class="ts-fill peak" style="width:83%"></div></div>
+    <div class="ts-badge">두 번째</div>
+  </div>
+  <div class="ts-row">
+    <div class="ts-name">오후 16–18시</div>
+    <div class="ts-track"><div class="ts-fill" style="width:39%"></div></div>
+    <div class="ts-badge muted">세 번째</div>
+  </div>
+  <div class="ts-row">
+    <div class="ts-name">저녁 19시~</div>
+    <div class="ts-track"><div class="ts-fill" style="width:22%"></div></div>
+    <div class="ts-badge muted">가장 적음</div>
+  </div>
+</div>
+
+<div class="insights">
+  <div class="insight-item hi">
+    <div class="insight-icon">📊</div>
+    <div class="insight-text"><strong>오후 13~15시와 오전 9~12시</strong>에 조회가 집중됩니다. 상담이 활발한 이 시간대에 앱을 적극 활용해주세요.</div>
+  </div>
+  <div class="insight-item hi">
+    <div class="insight-icon">🛍️</div>
+    <div class="insight-text"><strong>주말(토·일)은 오전 시간대</strong>에 사용이 집중됩니다. 오후에는 바빠서 힘드시죠? 뷰킷을 보여주면 좀 더 편하게 상담할 수 있으니 <strong>오후에도 많이 활용</strong>해주세요!</div>
+  </div>
+  <div class="insight-item wa">
+    <div class="insight-icon">💡</div>
+    <div class="insight-text"><strong>화요일 활용도가 전체적으로 낮습니다.</strong> 화요일 상담 시 앱 노출을 의식적으로 늘려보시길 권장합니다.</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ③ 클로징 -->
+
+  <div class="section-title">
+    <div class="section-num">03</div>
+    <div class="section-name">파일럿 마지막 주 예고 & 감사인사</div>
+  </div>
+
+  <div class="closing-card">
+    <div class="closing-glow"></div>
+    <div class="closing-inner">
+      <div class="closing-tag">📋 Pilot Final Week</div>
+      <div class="closing-title">한 달간 함께해주셔서<br><span>진심으로 감사드립니다</span></div>
+      <div class="closing-desc">4월 한 달간 뷰킷 파일럿에 함께해주신 모든 매니저분들께 감사드립니다. 여러분의 현장 경험과 피드백이 앱을 더 좋게 만드는 가장 큰 힘이 됩니다.</div>
+
+```
+  <div class="closing-thanks">
+    <strong>다음 주가 파일럿 마지막 주</strong>입니다.<br>
+    마지막까지 냉장고 상담 시 앱을 활용해주시고, 이벤트 참여도 잊지 말아주세요 🙌<br><br>
+    여러분의 소중한 사례와 의견이 다음 단계 개선에 직접 반영됩니다.
+  </div>
+
+  <div class="closing-nps" style="background:rgba(100,181,246,0.15); border:1.5px solid rgba(100,181,246,0.4);">
+    <div class="closing-nps-icon">📝</div>
+    <div class="closing-nps-text">
+      <strong style="font-size:14px; color:#64b5f6;">만족도 조사(NPS) 안내</strong><br><br>
+      다음 주 <strong>월~수 중</strong> 짧은 설문을 보내드릴 예정입니다.<br>
+      소요 시간 약 2~3분 · 5문항 이내로 구성됩니다.<br>
+      솔직한 의견 꼭 부탁드립니다 🙏
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
+</body>
+</html>
